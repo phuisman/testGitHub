@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>GitHubCode</web>
+  <name>SavedListSuggest</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>GitHubCode.GitHubConfigSheet</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1455231600000</creationDate>
+  <date>1455231600000</date>
+  <contentUpdateDate>1455231600000</contentUpdateDate>
+  <version>1.1</version>
+  <title>SavedListSuggest</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <content>{{velocity}}
+#set($ok = $response.setContentType("text/xml"))
+#set($input = $request.get("input").toLowerCase())
+#set($sql =  ", BaseObject as obj where doc.fullName=obj.name and obj.className='XWiki.SavedListClass' and lower(doc.title) like '%${input}%' order by doc.date desc")
+#set($queryResult = $xwiki.searchDocuments($sql, 30, 0))
+#set($results = $queryResult.toArray())
+    &lt;results type="8"&gt;
+    #foreach($res in $results)
+      &lt;rs id="$velocityCount" info="$res"&gt;$xwiki.getXMLEncoded($xwiki.getDocument($res).getDisplayTitle())&lt;/rs&gt;
+    #end
+    &lt;/results&gt;
+{{/velocity}}</content>
+</xwikidoc>
