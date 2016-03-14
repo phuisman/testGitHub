@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>GitHub</web>
+  <name>Github</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>GitHub.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1455231600000</creationDate>
+  <date>1455231600000</date>
+  <contentUpdateDate>1455231600000</contentUpdateDate>
+  <version>1.1</version>
+  <title>Up- en downloaden van Github</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <object>
+    <class>
+      <name>XWiki.JavaScriptExtension</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <cache>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>cache</name>
+        <number>5</number>
+        <prettyName>Caching policy</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>long|short|default|forbid</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </cache>
+      <code>
+        <disabled>0</disabled>
+        <name>code</name>
+        <number>2</number>
+        <prettyName>Code</prettyName>
+        <rows>20</rows>
+        <size>50</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </code>
+      <name>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>1</number>
+        <prettyName>Name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+      <parse>
+        <disabled>0</disabled>
+        <displayFormType>select</displayFormType>
+        <displayType>yesno</displayType>
+        <name>parse</name>
+        <number>4</number>
+        <prettyName>Parse content</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </parse>
+      <use>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>use</name>
+        <number>3</number>
+        <prettyName>Use this extension</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>currentPage|onDemand|always</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </use>
+    </class>
+    <name>GitHub.Github</name>
+    <number>0</number>
+    <className>XWiki.JavaScriptExtension</className>
+    <guid>0bac9645-41b0-47dd-b111-2555203b85d8</guid>
+    <property>
+      <cache>forbid</cache>
+    </property>
+    <property>
+      <code>require(['jquery'], function($) {
+  $('#select-all').click(function(event) {
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;
+        });
+    } else {
+    $(':checkbox').each(function() {
+          this.checked = false;
+      });
+    }
+  });
+});//</code>
+    </property>
+    <property>
+      <name>Selector</name>
+    </property>
+    <property>
+      <parse/>
+    </property>
+    <property>
+      <use>currentPage</use>
+    </property>
+  </object>
+  <content>{{velocity}}
+#if(!$xwiki.hasProgrammingRights())
+{{warning}}(${services.localization.render("github.warning.programmingrights")}){{/warning}}
+  #break
+#elseif(!$hasAdmin)
+{{warning}}(${services.localization.render("github.warning.adminrights")}){{/warning}}
+  #break
+#elseif(!$request.action &amp;&amp; !$request.github &amp;&amp; !$request.branch)
+
+  {{html}}
+  &lt;form method='post' class='xform'&gt;
+    &lt;div&gt;
+      &lt;dl&gt;
+        &lt;dt&gt;
+          &lt;label for="selectGithubConfig"&gt;${services.localization.render("github.selectconfiguration.message")}&lt;/label&gt;
+          &lt;span class="xHint"&gt;${services.localization.render("github.selectconfiguration.hint")}&lt;/span&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+          &lt;select name="github"&gt;
+  #set($hql=", BaseObject as obj where obj.name=doc.fullName and obj.className = 'GitHubCode.GitHubConfigClass' and doc.fullName&lt;&gt;'GeneriekeKlassen.GitHubConfigTemplate' order by doc.title")
+  #set($results=$services.query.hql($hql).execute())
+  #foreach($result in $results)
+    #set($githubDoc = $xwiki.getDocument($result))
+    #set($githubObj = $githubDoc.getObject('GitHubCode.GitHubConfigClass'))
+    #set($githubName = $githubObj.getProperty('name').value.toString())
+    #set($githubDescription = $githubObj.getProperty('description').value.toString())
+            &lt;option value="${result}"&gt;${githubName} - ${githubDescription}&lt;/option&gt;
+  #end
+          &lt;/select&gt;
+        &lt;/dd&gt;
+      &lt;/dl&gt;
+    &lt;/div&gt;
+    &lt;div class="buttons"&gt;
+      &lt;span class="buttonwrapper"&gt;
+        &lt;input type="submit" class="button" value="${services.localization.render("github.selectconfiguration.button")}"/&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+  {{/html}}
+
+#elseif(!$request.action &amp;&amp; $request.github &amp;&amp; !$request.branch)
+  $request.github
+  #set($githubDoc = $xwiki.getDocument(${request.github}))
+  #set($githubObj = $githubDoc.getObject('GeneriekeKlassen.GitHubConfigClass'))
+  #set($githubName = $githubObj.getProperty('name').value.toString())
+  #set($defaultBranch = $githubObj.getProperty('repository_branch').value.toString())
+  #set($branches = $services.Github.getBranches("${request.github}"))
+  #if ($defaultBranch=="")
+{{warning}}${services.localization.render("github.selectbranch.nodefaultbranch")}{{/warning}}
+
+  #end
+  #if ($defaultBranch!="" &amp;&amp; !$branches.contains(${defaultBranch}))
+{{warning}}${services.localization.render("github.selectbranch.defaultbranchnotingithub")}{{/warning}}
+
+  #end
+  {{html wiki=true}}
+  &lt;form method='post' class='xform'&gt;
+    &lt;input type="hidden" name="github" value="${request.github}" /&gt;
+    &lt;div&gt;
+      &lt;dl&gt;
+        &lt;dt&gt;
+          &lt;label for="Github branche"&gt;${services.localization.render("github.selectbranch.message")}&lt;/label&gt;
+          &lt;span class="xHint"&gt;$services.localization.render('github.selectbranch.hint', [$githubName])&lt;/span&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+          &lt;select name="branch"&gt;
+  #foreach($branch in $branches)
+    #if ($branch==$defaultBranch)
+            &lt;option value="${branch}" selected&gt;${branch} ${services.localization.render("github.selectbranch.defaultmessage")}&lt;/option&gt;
+    #else
+            &lt;option value="${branch}"&gt;${branch}&lt;/option&gt;
+    #end
+  #end
+          &lt;/select&gt;
+        &lt;/dd&gt;
+      &lt;/dl&gt;
+    &lt;/div&gt;
+    &lt;input type="text" name="newBranch" value="${services.localization.render("github.newbranch.message")}" size="20" class="withTip" /&gt;
+    &lt;div class="buttons"&gt;
+      &lt;span class="buttonwrapper"&gt;
+        &lt;input type="submit" class="button" value="${services.localization.render("github.selectbranch.button")}" /&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+  &lt;br /&gt;
+  [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+  {{/html}}
+
+#else
+  #set($githubDoc = $xwiki.getDocument(${request.github}))
+  #set($githubObj = $githubDoc.getObject('GitHubCode.GitHubConfigClass'))
+  #set($githubName = $githubObj.getProperty('name').value.toString())
+  #if($request.newBranch &amp;&amp; $request.newBranch!="")
+    #set($branch=$request.newBranch)
+  #else
+    #set($branch=$request.branch)
+  #end
+  #if((!$request.action || $request.action=="list"))
+    {{html wiki=true}}
+      ${services.localization.render("github.defaultmessage",[${githubName},${branch}])}
+      &lt;form action="$doc.name"  method="post"&gt;
+        &lt;input type="hidden" name="action" value="commit" /&gt;
+        &lt;input type="hidden" name="github" value="${request.github}" /&gt;
+        &lt;input type="hidden" name="branch" value="${branch}" /&gt;
+    #set($cmap = $services.Github.getChangedPages("${request.github}", "${branch}"))
+    #if($cmap.keySet().size()!=0)
+          &lt;br /&gt;&lt;input type="checkbox" name="select-all" id="select-all" /&gt;$services.localization.render("github.selectallfiles")&lt;br /&gt;&lt;br /&gt;
+    #else
+          &lt;br /&gt;${services.localization.render("github.allfilesequal")}
+    #end
+    #set($nr=1)
+    #set($canUpload=false)
+    #set($canDownload=false)
+    #foreach($page in $cmap.keySet())
+      #set($checkboxId = "checkbox-${nr}")
+      #set($status = $cmap.get($page))
+      #if($status.status=="AG"||$status.status=="F"||$status.status=="C"||$status.status=="MX"||$status.status=="U")
+        #set($canUpload=true)
+      #end
+      #if($status.status=="F"||$status.status=="MG"||$status.status=="C"||$status.status=="NG"||$status.status=="U")
+        #set($canDownload=true)
+      #end
+      ## encode the language of the document after the document name, after a dot. Will be processed on commit
+          &lt;input type="hidden" name="${status.fullname}.$!{status.language}_sha" value="${status.githubsha}" /&gt;
+          | &lt;input type="checkbox" name="page" value="${status.fullname}.$!{status.language}" id="${checkboxId}/&gt; ${services.localization.render("github.statusmessage_${status.status}")} | ${page} |
+          &lt;input type="hidden" name="${status.fullname}.$!{status.language}_sha" value="${status.githubsha}" /&gt; |
+      #if($status.status!="AG")
+        #set($dName=$status.fullname.toString())
+        #set($dLanguage=$status.language.toString())
+            [[${services.localization.render("github.viewdiff")}&gt;&gt;${doc.fullName}||queryString="action=compare&amp;github=${request.github}&amp;branch=${branch}&amp;page=${status.fullname}&amp;githublanguage=${status.language}&amp;githubsha=${status.githubsha}" target=_blank]] - 
+            [[${services.localization.render("github.viewdiffunformatted")}&gt;&gt;${doc.fullName}||queryString="action=compare&amp;github=${request.github}&amp;branch=${branch}&amp;page=${status.fullname}&amp;githublanguage=${status.language}&amp;githubsha=${status.githubsha}&amp;unformatted=1" target=_blank]] 
+            #if($status.status!="NG")
+              - [[${services.localization.render("github.viewdoc")}&gt;&gt;${status.fullname}||queryString="language=${dLanguage}" target=_blank]]
+            #end
+      #end
+      #set($nr=$nr+1)
+    #end
+
+        &lt;br /&gt;
+        &lt;input type="submit" name="commit" #if(!$canUpload)"disabled"#end value="${services.localization.render("github.commitall")}" /&gt; &lt;input type="submit" name="update" #if(!$canDownload)"disabled"#end value="${services.localization.render("github.updateall")}" /&gt;
+      &lt;/form&gt;
+      &lt;br /&gt;
+      [[${services.localization.render("github.backtoselectbranch")}&gt;&gt;${doc.fullName}||queryString="github=${request.github}"]] - [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+    {{/html}}
+
+  #elseif($request.update)
+    {{html wiki=true}}
+      ${services.localization.render("github.defaultmessage",[${githubName},${request.branch}])}
+      &lt;br /&gt;
+    #set($pagelist = $xwiki.arrayList)
+    #foreach($page in $request.getParameterValues("page"))
+      #set($ok = $pagelist.add($page))
+    #end
+    #set($list = $services.Github.updatePages("${request.github}", "${request.branch}", $pagelist))
+      $services.localization.render("github.pagesupdated")
+      &lt;br /&gt;
+      &lt;ul&gt;
+    #foreach($page in $list.keySet())
+        &lt;li&gt;$page
+    #end
+      &lt;/ul&gt;
+      &lt;br /&gt;
+      [[${services.localization.render("github.backtolist")}&gt;&gt;${doc.fullName}||queryString="action=list&amp;github=${request.github}&amp;branch=${request.branch}"]] - [[${services.localization.render("github.backtoselectbranch")}&gt;&gt;${doc.fullName}||queryString="github=${request.github}"]] - [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+    {{/html}}
+
+  ## COMMIT ACTION with confirm
+  #elseif($request.action=="commit" &amp;&amp; $request.confirm=="1")
+    {{html wiki=true}}
+      ${services.localization.render("github.defaultmessage",[${githubName},${request.branch}])}
+      &lt;br /&gt;
+      $services.localization.render("github.committingpages")
+    #set($pagelist = $xwiki.arrayList)
+      &lt;ul&gt;
+    #foreach($page in $request.getParameterValues("page"))
+        &lt;li&gt;$page
+      #set($ok = $pagelist.add($page))
+    #end
+      &lt;/ul&gt;
+    #set($test = $services.Github.commitFiles("${request.github}", "${request.branch}", $pagelist, $request.message, $!request.pom))
+      $services.localization.render("github.committsuccessfull")
+      &lt;br /&gt;
+      [[${services.localization.render("github.backtolist")}&gt;&gt;${doc.fullName}||queryString="action=list&amp;github=${request.github}&amp;branch=${request.branch}"]] - [[${services.localization.render("github.backtoselectbranch")}&gt;&gt;${doc.fullName}||queryString="github=${request.github}"]] - [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+    {{/html}}
+
+  ## COMMIT ACTION before confirm
+  #elseif($request.action=="commit")
+    ## confirm commit
+
+    {{html wiki=true}}
+      ${services.localization.render("github.defaultmessage",[${githubName},${request.branch}])}
+      $services.localization.render("github.confirmcommittingpage")
+      &lt;form action="$doc.name" method="post"&gt;
+        &lt;input type="hidden" name="action" value="commit" /&gt;
+        &lt;input type="hidden" name="confirm" value="1" /&gt;
+        &lt;input type="hidden" name="github" value="${request.github}" /&gt;
+        &lt;input type="hidden" name="branch" value="${request.branch}" /&gt;
+        ## just pass the pages to commit further
+        &lt;ul&gt;
+    #foreach($page in $request.getParameterValues("page"))
+          &lt;li&gt;$page
+          &lt;input type="hidden" name="page" value="$!{page}" /&gt;
+    #end
+        &lt;/ul&gt;
+        $services.localization.render("github.commitmessage")
+        &lt;br /&gt;
+        &lt;textarea name="message" rows="5" cols="80"&gt;
+        &lt;/textarea&gt;
+        &lt;br /&gt;
+        &lt;input type="checkbox" name="pom" value="1" /&gt; $services.localization.render("github.commitpom")
+        &lt;br /&gt;
+        &lt;input type="submit" value="Commit" /&gt;
+      &lt;/form&gt;
+      &lt;br /&gt;
+      [[${services.localization.render("github.backtolist")}&gt;&gt;${doc.fullName}||queryString="action=list&amp;github=${request.github}&amp;branch=${request.branch}"]] - [[${services.localization.render("github.backtoselectbranch")}&gt;&gt;${doc.fullName}||queryString="github=${request.github}"]] - [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+   {{/html}}
+
+  #elseif($request.action=="compare")
+    {{html clean=false}}
+      &lt;style type="text/css"&gt;
+        .diffremoveword {
+          background-color: #FFAAAA;
+        }
+        .diffaddword {
+          background-color: #AAFFAA;
+        }
+      &lt;/style&gt;
+    #set($pagedoc = $xwiki.getDocument($request.page))
+    #if($request.githublanguage)
+      #set($pagedoc = $pagedoc.getTranslatedDocument($request.githublanguage))
+    #end
+    #if("1"=="$!{request.unformatted}")
+      #set($results=$services.Github.showXMLDiff("${request.github}", "${request.branch}", $pagedoc, "${request.githubsha}", false))
+$results
+    #else
+      #set($results=$services.Github.showXMLDiff("${request.github}", "${request.branch}", $pagedoc, "${request.githubsha}", true))
+$results
+    #end
+    {{/html}}
+
+  ## OTHER ACTION
+
+  [[${services.localization.render("github.backtolist")}&gt;&gt;${doc.fullName}||queryString="action=list&amp;github=${request.github}&amp;branch=${request.branch}"]] - [[${services.localization.render("github.backtoselectbranch")}&gt;&gt;${doc.fullName}||queryString="action=list&amp;github=${request.github}"]] - [[${services.localization.render("github.backtoselectconfig")}&gt;&gt;${doc.fullName}]]
+  #end
+#end ## end set config failed
+{{/velocity}}
+</content>
+</xwikidoc>
