@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>360API</web>
+  <name>Get360WikiInfo</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>360API.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1455231600000</creationDate>
+  <date>1455231600000</date>
+  <contentUpdateDate>1455231600000</contentUpdateDate>
+  <version>1.1</version>
+  <title>Get360WikiInfo</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <content>{{velocity wiki="false"}}
+#if("$!{request.xpage}" == 'plain')
+  $response.setContentType('application/json')
+#end
+#if("$!{request.changedSince}" != "")
+  #set($changedSince=$datetool.toDate('yyyyMMddHHmmssSSS', ${request.changedSince}))
+#else
+  #set($changedSince=$datetool.toDate('yyyyMMddHHmmssSSS', "19700101000000000"))
+#end
+## Algemene wiki-informatie
+#set($wikiInfo={})
+#set($beheerdeOverheden=[])
+#set($configDoc=$xwiki.getDocument('360.360Configuratie'))
+#set($configObj=$configDoc.getObject('GeneriekeKlassen.ConfiguratieWikiClass'))
+#set($discard=$wikiInfo.put('wikiId', $services.wiki.currentWikiId))
+#set($discard=$wikiInfo.put('wikiPrettyName', ${services.wiki.getById($services.wiki.currentWikiId).prettyName}))
+#set($discard=$wikiInfo.put('WikiEigenaarOverheidslaag', $configObj.WikiEigenaarOverheidslaag))
+#set($discard=$wikiInfo.put('beheerdeOverheidsorganisaties', $configObj.getProperty('beheerdeOverheidsorganisaties').value))
+#### Users
+#set($xwqUsers="from doc.object('XWiki.XWikiUsers') as user where doc.name not like '%Template'")
+#set($aantalGebruikers=$services.query.xwql($xwqUsers).addFilter("count").execute())
+#set($discard=$wikiInfo.put('wikiAantalGebruikers', $aantalGebruikers[0]))
+#### Zaaktypecatalogi
+#set($catalogi=[])
+#set($xwqCat="from doc.object('ZTCKlassen.CatalogusClass') as cat where doc.name not like '%Template'")
+#set($catResults=$services.query.xwql($xwqCat).execute())
+#set($discard=$wikiInfo.put('wikiAantalZaaktypecatalogi', $catResults.size()))
+#if($catResults.size() &gt; 0)
+  #foreach($catResult in $catResults)
+    #set($catalogus={})
+    #set($catDoc=$xwiki.getDocument($catResult))
+    #set($catObj=$catDoc.getObject('ZTCKlassen.CatalogusClass'))
+    #set($discard=$catalogus.put('identificatieString', $catObj.identificatieString))
+    #set($discard=$catalogus.put('externeUrl', $catDoc.getExternalURL()))
+    #set($discard=$catalogus.put('logo', $xcontext.getURLFactory().createAttachmentURL($catObj.catalogusLogo, $catDoc.space, $catDoc.name, "download", "", $xcontext.getContext())))
+    #set($discard=$catalogus.put('naam', $catObj.naam))
+    #set($discard=$catalogus.put('domein', $catObj.domein))
+    #set($discard=$catalogus.put('rsin', $catObj.rsin))
+    #set($discard=$catalogus.put('overheidsorganisatie', $catObj.getValue('overheidsorganisatie')))
+    #### Informatieobjecttypen
+    #set($xwqIot="from doc.object('ZTCKlassen.InformatieobjecttypeClass') as iot where iot.maaktDeelUitVanCatalogus=:cat and doc.date &gt;= :changedSince and doc.name not like '%Template' order by iot.informatieobjecttypeOmschrijving")
+    #set($iotResults=$services.query.xwql($xwqIot).bindValue("cat", $catObj.identificatieString).bindValue("changedSince", $datetool.toDate('yyyy-MM-dd HH:mm:ss:SSS', $changedSince)).execute())
+    #set($discard=$catalogus.put('aantalInformatieobjecttypen', $iotResults.size()))
+    #set($informatieobjecttypen=[])
+    #if($iotResults.size() &gt; 0)
+      #foreach($iotResult in $iotResults)
+        #set($informatieobjecttype={})
+        #set($iotDoc=$xwiki.getDocument($iotResult))
+        #set($iotObj=$iotDoc.getObject('ZTCKlassen.InformatieobjecttypeClass'))
+        #set($discard=$informatieobjecttype.put('identificatieString', $iotObj.identificatieString))
+        #set($discard=$informatieobjecttype.put('externeUrl', $iotDoc.getExternalURL()))
+        #set($discard=$informatieobjecttype.put('informatieobjecttypeOmschrijving', $iotObj.informatieobjecttypeOmschrijving))
+        #set($discard=$informatieobjecttype.put('informatieobjecttypeOmschrijvingGeneriek', $iotObj.informatieobjecttypeOmschrijvingGeneriek))
+        #set($discard=$informatieobjecttype.put('toelichting', $iotObj.getValue('toelichting')))
+        #set($discard=$informatieobjecttype.put('datumBeginGeldigheidInformatieobjecttype', "$!{datetool.format('dd-MM-yyyy', $iotObj.getValue('datumBeginGeldigheidInformatieobjecttype'))}"))
+        #set($discard=$informatieobjecttype.put('datumEindeGeldigheidInformatieobjecttype', "$!{datetool.format('dd-MM-yyyy', $iotObj.getValue('datumEindeGeldigheidInformatieobjecttype'))}"))
+        #### Versies
+        #set($minorVersions=true)
+        #set($criteria = $xwiki.criteriaService.revisionCriteriaFactory.createRevisionCriteria('', $minorVersions))
+        #set($versieResults = $iotDoc.getRevisions($criteria))
+        #set($discard = $collectionstool.reverse($versieResults))
+        #set($discard=$informatieobjecttype.put('aantalVersies', $versieResults.size()))
+        #set($versies=[])
+        #if($versieResults.size() &gt; 0)
+          #foreach($versieResult in $versieResults)
+            #set($versie={})
+            #set($versieInfo=$iotDoc.getRevisionInfo($versieResult))
+            #set($discard=$versie.put('versie', $versieResult))
+            #set($discard=$versie.put('versieUrl', $iotDoc.getExternalURL('viewrev',"rev=$versieResult")))
+            #set($discard=$versie.put('versieAuteur', $xwiki.getUserName($versieInfo.author, false)))
+            #set($discard=$versie.put('versieDatum', $datetool.format("dd-MM-yyyy HH:mm:ss", $versieInfo.date)))
+            #set($discard=$versie.put('versieOpmerking', $versieInfo.comment))
+            #set($discard=$versies.add($versie))
+          #end
+        #end
+        #set($discard=$informatieobjecttype.put('versies', $versies))
+        #set($discard=$informatieobjecttypen.add($informatieobjecttype))
+      #end
+      #set($discard=$catalogus.put('informatieobjecttypen', $informatieobjecttypen))
+    #end
+    #### Besluittypen
+    #set($xwqBst="from doc.object('ZTCKlassen.BesluittypeClass') as bst where bst.maaktDeelUitVanCatalogus=:cat and doc.date &gt;= :changedSince and doc.name not like '%Template' order by bst.besluittypeOmschrijving")
+    #set($bstResults=$services.query.xwql($xwqBst).bindValue("cat", $catObj.identificatieString).bindValue("changedSince", $datetool.toDate('yyyy-MM-dd HH:mm:ss:SSS', $changedSince)).execute())
+    #set($discard=$catalogus.put('aantalBesluittypen', $bstResults.size()))
+    #set($besluittypen=[])
+    #if($bstResults.size() &gt; 0)
+      #foreach($bstResult in $bstResults)
+        #set($besluittype={})
+        #set($bstDoc=$xwiki.getDocument($bstResult))
+        #set($bstObj=$bstDoc.getObject('ZTCKlassen.BesluittypeClass'))
+        #set($discard=$besluittype.put('identificatieString', $bstObj.identificatieString))
+        #set($discard=$besluittype.put('externeUrl', $bstDoc.getExternalURL()))
+        #set($discard=$besluittype.put('besluittypeOmschrijving', $bstObj.besluittypeOmschrijving))
+        #set($discard=$besluittype.put('besluittypeOmschrijvingGeneriek', $bstObj.besluittypeOmschrijvingGeneriek))
+        #set($discard=$besluittype.put('toelichting', $bstObj.getValue('toelichting')))
+        #set($discard=$besluittype.put('datumBeginGeldigheidBesluittype', "$!{datetool.format('dd-MM-yyyy', $bstObj.getValue('datumBeginGeldigheidBesluittype'))}"))
+        #set($discard=$besluittype.put('datumEindeGeldigheidBesluittype', "$!{datetool.format('dd-MM-yyyy', $bstObj.getValue('datumEindeGeldigheidBesluittype'))}"))
+        #### Versies
+        #set($minorVersions=true)
+        #set($criteria = $xwiki.criteriaService.revisionCriteriaFactory.createRevisionCriteria('', $minorVersions))
+        #set($versieResults = $bstDoc.getRevisions($criteria))
+        #set($discard = $collectionstool.reverse($versieResults))
+        #set($discard=$besluittype.put('aantalVersies', $versieResults.size()))
+        #set($versies=[])
+        #if($versieResults.size() &gt; 0)
+          #foreach($versieResult in $versieResults)
+            #set($versie={})
+            #set($versieInfo=$bstDoc.getRevisionInfo($versieResult))
+            #set($discard=$versie.put('versie', $versieResult))
+            #set($discard=$versie.put('versieUrl', $bstDoc.getExternalURL('viewrev',"rev=$versieResult")))
+            #set($discard=$versie.put('versieAuteur', $xwiki.getUserName($versieInfo.author, false)))
+            #set($discard=$versie.put('versieDatum', $datetool.format("dd-MM-yyyy HH:mm:ss", $versieInfo.date)))
+            #set($discard=$versie.put('versieOpmerking', $versieInfo.comment))
+            #set($discard=$versies.add($versie))
+          #end
+        #end
+        #set($discard=$besluittype.put('versies', $versies))
+        #set($discard=$besluittypen.add($besluittype))
+      #end
+      #set($discard=$catalogus.put('besluittypen', $besluittypen))
+    #end
+    #### Zaaktypen
+    #set($xwqZkt="from doc.object('ZTCKlassen.ZaaktypeClass') as zkt where zkt.maaktDeelUitVanCatalogus=:cat and doc.date &gt;= :changedSince and doc.name not like '%Template' order by zkt.zaaktypeIdentificatie")
+    #set($zktResults=$services.query.xwql($xwqZkt).bindValue("cat", $catObj.identificatieString).bindValue("changedSince", $datetool.toDate('yyyy-MM-dd HH:mm:ss:SSS', $changedSince)).execute())
+    #set($discard=$catalogus.put('aantalZaaktypen', $zktResults.size()))
+    #set($zaaktypen=[])
+    #if($zktResults.size() &gt; 0)
+      #foreach($zktResult in $zktResults)
+        #set($zaaktype={})
+        #set($zktDoc=$xwiki.getDocument($zktResult))
+        #set($zktObj=$zktDoc.getObject('ZTCKlassen.ZaaktypeClass'))
+        #set($discard=$zaaktype.put('identificatieString', $zktObj.identificatieString))
+        #set($discard=$zaaktype.put('externeUrl', $zktDoc.getExternalURL()))
+        #if("$!{zktObj.getValue('afbeelding')}" != "")
+          #set($discard=$zaaktype.put('afbeelding', $xcontext.getURLFactory().createAttachmentURL($zktObj.afbeelding, $zktDoc.space, $zktDoc.name, "download", "", $xcontext.getContext())))
+        #else
+          #set($discard=$zaaktype.put('afbeelding', ""))
+        #end
+        #if("$!{zktObj.zaaktypeIdentificatie}" != "")
+          #set($discard=$zaaktype.put('zaaktypeIdentificatie', $numbertool.toNumber($zktObj.zaaktypeIdentificatie)))
+        #else
+          #set($discard=$zaaktype.put('zaaktypeIdentificatie', $numbertool.toNumber(0)))
+        #end
+        #set($discard=$zaaktype.put('zaaktypeOmschrijving', $zktObj.zaaktypeOmschrijving))
+        #set($discard=$zaaktype.put('zaaktypeOmschrijvingGeneriek', $zktObj.zaaktypeOmschrijvingGeneriek))
+        #set($discard=$zaaktype.put('doel', $zktObj.getValue('doel')))
+        #set($discard=$zaaktype.put('versiedatum', $datetool.format("dd-MM-yyyy HH:mm:ss", $zktDoc.date)))
+        #set($discard=$zaaktype.put('datumBeginGeldigheidZaaktype', "$!{datetool.format('dd-MM-yyyy', $zktObj.getValue('datumBeginGeldigheidZaaktype'))}"))
+        #set($discard=$zaaktype.put('datumEindeGeldigheidZaaktype', "$!{datetool.format('dd-MM-yyyy', $zktObj.getValue('datumEindeGeldigheidZaaktype'))}"))
+        #### Versies
+        #set($minorVersions=true)
+        #set($criteria = $xwiki.criteriaService.revisionCriteriaFactory.createRevisionCriteria('', $minorVersions))
+        #set($versieResults = $zktDoc.getRevisions($criteria))
+        #set($discard = $collectionstool.reverse($versieResults))
+        #set($discard=$zaaktype.put('aantalVersies', $versieResults.size()))
+        #set($versies=[])
+        #if($versieResults.size() &gt; 0)
+          #foreach($versieResult in $versieResults)
+            #set($versie={})
+            #set($versieInfo=$zktDoc.getRevisionInfo($versieResult))
+            #set($discard=$versie.put('versie', $versieResult))
+            #set($discard=$versie.put('versieUrl', $zktDoc.getExternalURL('viewrev',"rev=$versieResult")))
+            #set($discard=$versie.put('versieAuteur', $xwiki.getUserName($versieInfo.author, false)))
+            #set($discard=$versie.put('versieDatum', $datetool.format("dd-MM-yyyy HH:mm:ss", $versieInfo.date)))
+            #set($discard=$versie.put('versieOpmerking', $versieInfo.comment))
+            #set($discard=$versies.add($versie))
+          #end
+        #end
+        #set($discard=$zaaktype.put('versies', $versies))
+        #### Opslaan
+        #set($discard=$zaaktypen.add($zaaktype))
+      #end
+      #set($discard=$catalogus.put('zaaktypen', $zaaktypen))
+    #end
+    #set($discard=$catalogi.add($catalogus))
+  #end
+  #set($discard=$wikiInfo.put('zaaktypecatalogi', $catalogi))
+  #set($discard=$wikiInfo.put('syncDate', $datetool.format("yyyyMMddHHmmssSSS", $datetool.getDate())))
+#end
+$jsontool.serialize(${wikiInfo})
+{{/velocity}}</content>
+</xwikidoc>
