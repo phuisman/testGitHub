@@ -22,7 +22,7 @@
   <minorEdit>false</minorEdit>
   <syntaxId>xwiki/2.1</syntaxId>
   <hidden>true</hidden>
-  <content>github.title=GitHub Synchronisatie Applicatie
+  <content>github.title=GitHub Synchronisatie Applikatie
 github.description=Welkom in de GitHub Synchronisatie Applicatie. U kunt in deze applicatie uw GitHub repositories configureren - eventueel in meerdere GitHub-configuraties - en vervolgens uw wiki-inhoud synchroniseren met uw GitHub repositories.
 github.warning.programmingrightsrequired=Deze applicatie functioneert niet als de huidige pagina niet is opgeslagen door een gebruiker met programmeerrechten. Sla de pagina op als gebruiker met programmeerrechten en probeer het opnieuw.
 github.warning.adminrightsrequired=U beschikt over onvoldoende rechten. Voor het gebruik van deze applicatie zijn Administrator-rechten nodig.
