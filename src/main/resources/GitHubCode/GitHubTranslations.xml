@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>GitHubCode</web>
+  <name>GitHubTranslations</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>GitHubCode.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1453935600000</creationDate>
+  <date>1453935600000</date>
+  <contentUpdateDate>1453935600000</contentUpdateDate>
+  <version>1.1</version>
+  <title>GitHub Translations</title>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <object>
+    <class>
+      <name>XWiki.TranslationDocumentClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <scope>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>select</displayType>
+        <multiSelect>0</multiSelect>
+        <name>scope</name>
+        <number>1</number>
+        <prettyName>Scope</prettyName>
+        <relationalStorage>0</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>1</size>
+        <unmodifiable>0</unmodifiable>
+        <values>GLOBAL|WIKI|USER|ON_DEMAND</values>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </scope>
+    </class>
+    <name>GitHubCode.GitHubTranslations</name>
+    <number>0</number>
+    <className>XWiki.TranslationDocumentClass</className>
+    <guid>1e4039d1-4134-449f-9174-b435e96ccc53</guid>
+    <property>
+      <scope>WIKI</scope>
+    </property>
+  </object>
+  <content>github.title=GitHub Synchronisatie Applicatie
+github.description=Welkom in de GitHub Synchronisatie Applicatie. U kunt in deze applicatie uw GitHub repositories configureren - eventueel in meerdere GitHub-configuraties - en vervolgens uw wiki-inhoud synchroniseren met uw GitHub repositories.
+github.warning.programmingrightsrequired=Deze applicatie functioneert niet als de huidige pagina niet is opgeslagen door een gebruiker met programmeerrechten. Sla de pagina op als gebruiker met programmeerrechten en probeer het opnieuw.
+github.warning.adminrightsrequired=U beschikt over onvoldoende rechten. Voor het gebruik van deze applicatie zijn Administrator-rechten nodig.
+github.currentconfigs.title=Huidige GitHub-configuraties
+github.currentconfigs.noconfigs=Er zijn op dit moment geen GitHub-configuraties ingesteld
+github.createnewconfig=Maak een nieuwe GitHub-configuratie
+github.createnewimport.error.titlemissing=U moet een naam opgeven voor uw GitHub-configuratie
+github.configsheet.title=GitHub Repository Configuratie
+github.configsheet.compare.title=Verschillen met
+github.configsheet.debug=Debug
+github.configsheet.commitmessage=Bericht voor deze commit
+github.configsheet.commitpom=Commit Maven POM-bestand
+github.configsheet.changebranch=Wijzig branch
+github.configsheet.listpages=Toon te synchroniseren pagina's
+github.configsheet.listpages.status=Sync status
+github.configsheet.listpages.page=Pagina
+github.configsheet.listpages.action=Bekijk
+github.configsheet.listpages.action.viewdoc=Pagina
+github.configsheet.listpages.action.viewdiff=Verschil
+github.configsheet.listpages.action.viewdiffunformatted=Verschil zonder opmaak
+github.configsheet.commitall=Commit naar GitHub
+github.configsheet.updateall=Update vanaf GitHub
+github.configsheet.exportall=Exporteer
+github.configsheet.commit=Commit
+github.configsheet.viewdoc=Bekijk Pagina
+github.configsheet.viewdiff=Bekijk Verschillen
+github.configsheet.viewdiffunformatted=Bekijk Verschillen zonder opmaak
+github.configsheet.committingpages=De volgende pagina's worden gecommit
+github.configsheet.committsuccessfull=De commit is succesvol uitgevoerd
+github.configsheet.backtolist=Terug naar het overzicht van pagina's die moeten worden gesynchroniseerd
+github.configsheet.backtocustom=Terug naar de lijst van additionele pagina's die moeten worden gesynchroniseerd
+github.configsheet.confirmcommittingpage=Bevestig de commit van de volgende pagina(s)
+github.configsheet.custom.spacelist=Lijst van te synchroniseren paginaruimten (gescheiden door komma's)
+github.configsheet.custom.space=Paginaruimte(n)
+github.configsheet.customlist=Lijst van te synchroniseren pagina's (buiten de opgegeven paginaruimten)
+github.configsheet.selectCustomBranch=Selecteer andere branch
+github.configsheet.selectCustomBranch_tooltip=Selecteer een andere branch uit de beschikbare branches of maak een nieuwe branch
+github.configsheet.createNewBranchOption=- Maak een nieuwe branch -
+github.configsheet.createNewBranch=Naam nieuwe Branch
+github.configsheet.createNewBranch_tooltip=Naam van de nieuwe branch die in repository {0} wordt gemaakt
+github.configsheet.pagesupdated=De volgende pagina's zijn geupdate vanaf GitHub
+github.configsheet.configurationused=GitHub repository, branch en pad
+github.configsheet.selectallpages=Selecteer alle pagina's
+github.configsheet.allpagesequal=Alle te synchroniseren pagina's in deze wiki zijn gelijk aan de pagina's in GitHub
+github.configsheet.status_AG=Nieuw in XWiki (alleen COMMIT)
+github.configsheet.status_F=Format verschil (COMMIT/UPDATE)
+github.configsheet.status_MG=Gewijzigd in GitHub (COMMIT/UPDATE)
+github.configsheet.status_C=Een conflict (COMMIT/UPDATE)
+github.configsheet.status_MX=Gewijzigd in XWiki (COMMIT/UPDATE)
+github.configsheet.status_NG=Nieuw in GitHub (alleen UPDATE)
+github.configsheet.status_U=Onbekend (COMMIT/UPDATE ?)
+GeneriekeKlassen.GitHubConfigClass_name=Projectnaam
+GeneriekeKlassen.GitHubConfigClass_description=Projectomschrijving
+GeneriekeKlassen.GitHubConfigClass_version=Versie van het project
+GeneriekeKlassen.GitHubConfigClass_repository_user=GitHub Repository gebruiker/organisatie
+GeneriekeKlassen.GitHubConfigClass_repository_user_tooltip=Naam van de GitHib gebruiker of organisatie onder wiens account de repository zich bevindt
+GeneriekeKlassen.GitHubConfigClass_repository_name=Naam GitHub Repository
+GeneriekeKlassen.GitHubConfigClass_repository_name_tooltip=Naam van de GitHub repository waarmee de pagina's moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_repository_path=Pad binnen GitHub Repository
+GeneriekeKlassen.GitHubConfigClass_repository_path_tooltip=Relatief pad binnen de repository waarmee de pagina's moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_repository_branch=Standaard GitHub Repository Branch
+GeneriekeKlassen.GitHubConfigClass_repository_branch_tooltip=Standaard branch binnen de repository waarmee de pagina's moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_username=Gebruikersnaam GitHub-login
+GeneriekeKlassen.GitHubConfigClass_username_tooltip=Gebruikersnaam waarmee wordt ingelogd op de GitHub repository
+GeneriekeKlassen.GitHubConfigClass_password=Wachtwoord
+GeneriekeKlassen.GitHubConfigClass_password_tooltip=Wachtwoord van de gebruiker die inlogt op de GitHub repository
+GeneriekeKlassen.GitHubConfigClass_defaultspace=Paginaruimten
+GeneriekeKlassen.GitHubConfigClass_defaultspace_tooltip=Lijst met paginaruimten die moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_defaultpage=Additionele pagina's
+GeneriekeKlassen.GitHubConfigClass_defaultpage_tooltip=Lijst met additionele pagina's (buiten opgegeven paginaruimten, komma-gescheiden) die moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_savedlist=Opgeslagen lijst (van MultiPageExport-uitbreiding)
+GeneriekeKlassen.GitHubConfigClass_savedlist_tooltip=Opgeslagen lijst - van de MultiPageExport-uitbreiding - van pagina's die moeten worden gesynchroniseerd
+GeneriekeKlassen.GitHubConfigClass_defaultdate=Datum
+GeneriekeKlassen.GitHubConfigClass_defaultdate_tooltip=Datum die wordt ingesteld op alle pagina's die worden gecommit
+GeneriekeKlassen.GitHubConfigClass_defaultuser=XWiki-gebruiker
+GeneriekeKlassen.GitHubConfigClass_defaultuser_tooltip=Naam van de XWiki-gebruiker die wordt ingesteld als auteur van alle pagina's die worden gecommit
+GeneriekeKlassen.GitHubConfigClass_status=Commit Status
+GeneriekeKlassen.GitHubAuthClass_username=GitHub Gebruikersnaam
+GeneriekeKlassen.GitHubAuthClass_username_tooltip=Gebruikersnaam van de GitHub-gebruiker die de synchronisatie uitvoert
+GeneriekeKlassen.GitHubAuthClass_password=GitHub Wachtwoord
+GeneriekeKlassen.GitHubAuthClass_password_tooltip=Wachtwoord van de GitHub-gebruiker die de synchronisatie uitvoert
+GeneriekeKlassen.GitHubAuthClass_email=GitHubgebruiker E-mailadres
+GeneriekeKlassen.GitHubAuthClass_email_tooltip=E-mailadres van de GitHub-gebruiker die de synchronisatie uitvoert
+</content>
+</xwikidoc>
